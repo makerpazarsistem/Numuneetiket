@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Filament Etiket 12'li</title>
+    <title>Filament Etiket</title>
     <style>
         * {
             margin: 0;
@@ -27,17 +27,51 @@
             border-radius: 16px;
             box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
         }
-        h2 {
-            text-align: center;
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
             margin-bottom: 18px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        h2 {
             color: #1e2a3a;
             font-size: 22px;
+            margin: 0;
+        }
+        .secenek {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .secenek label {
+            font-weight: 600;
+            color: #1e2a3a;
+            font-size: 15px;
+        }
+        .secenek select {
+            padding: 8px 16px;
+            border-radius: 8px;
+            border: 2px solid #2b7be4;
+            background: white;
+            font-size: 16px;
+            font-weight: 600;
+            color: #1e2a3a;
+            cursor: pointer;
+            outline: none;
+        }
+        .secenek select:focus {
+            box-shadow: 0 0 0 3px rgba(43, 123, 228, 0.2);
         }
         .grid {
             display: grid;
             grid-template-columns: 1fr 1fr 1fr;
             gap: 10px;
             margin-bottom: 25px;
+        }
+        .grid.tekli {
+            grid-template-columns: 1fr;
         }
         .etiket-kart {
             background: #f8faff;
@@ -51,6 +85,14 @@
             justify-content: center;
             gap: 6px;
             width: 100%;
+        }
+        .grid.tekli .etiket-kart {
+            min-height: 400px;
+            padding: 40px 20px;
+        }
+        .grid.tekli .etiket-kart input {
+            font-size: 32px;
+            padding: 20px 16px;
         }
         .etiket-kart input {
             width: 100%;
@@ -73,6 +115,9 @@
             font-weight: 400;
             font-size: 14px;
             color: #a0aec0;
+        }
+        .grid.tekli .etiket-kart input::placeholder {
+            font-size: 20px;
         }
         .butonlar {
             display: flex;
@@ -132,11 +177,22 @@
                 padding: 8px !important;
                 max-width: 100% !important;
             }
-            .butonlar, .uyari, h2 {
+            .butonlar, .uyari, .header h2, .secenek {
                 display: none !important;
             }
             .grid {
                 gap: 8px !important;
+            }
+            .grid.tekli .etiket-kart {
+                min-height: 100vh !important;
+                padding: 40px 20px !important;
+                border: 2px solid #000 !important;
+            }
+            .grid.tekli .etiket-kart input {
+                font-size: 48px !important;
+                padding: 20px !important;
+                border: none !important;
+                background: transparent !important;
             }
             .etiket-kart {
                 border: 1.5px solid #000 !important;
@@ -161,7 +217,16 @@
 <body>
 
 <div class="container">
-    <h2>🏷️ Filament Etiket (12'li)</h2>
+    <div class="header">
+        <h2>🏷️ Filament Etiket</h2>
+        <div class="secenek">
+            <label for="adetSec">Adet:</label>
+            <select id="adetSec" onchange="degistir()">
+                <option value="1">1 (Tam Sayfa)</option>
+                <option value="12" selected>12 (3x4)</option>
+            </select>
+        </div>
+    </div>
 
     <div class="print-alani">
         <div class="grid" id="etiketGrid"></div>
@@ -178,7 +243,7 @@
 </div>
 
 <script>
-    const adet = 12;  // 6'dan 12'ye çıkarıldı
+    let mevcutAdet = 12;
 
     function etiketOlustur(index) {
         const div = document.createElement('div');
@@ -191,12 +256,22 @@
         return div;
     }
 
-    function gridDoldur() {
+    function gridDoldur(adet) {
         const grid = document.getElementById('etiketGrid');
         grid.innerHTML = '';
+        grid.className = 'grid';
+        if (adet === 1) {
+            grid.classList.add('tekli');
+        }
         for (let i = 0; i < adet; i++) {
             grid.appendChild(etiketOlustur(i));
         }
+    }
+
+    function degistir() {
+        const secim = document.getElementById('adetSec').value;
+        mevcutAdet = parseInt(secim);
+        gridDoldur(mevcutAdet);
     }
 
     function yazdir() {
@@ -207,7 +282,8 @@
         document.querySelectorAll('.fila-ad, .fila-tur, .fila-renk').forEach(inp => inp.value = '');
     }
 
-    gridDoldur();
+    // Sayfa açılınca 12'li olarak başla
+    gridDoldur(12);
 </script>
 
 </body>
